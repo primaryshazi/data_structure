@@ -4,7 +4,8 @@
 #include <iostream>
 #include <new>
 
-typedef enum {
+typedef enum
+{
     RED = 0,
     BLACK = 1
 } Color;
@@ -12,17 +13,17 @@ typedef enum {
 template <class T>
 struct RBTreeNode
 {
-    Color _color;           // 颜色
-    T _key;                 // 关键字
-    RBTreeNode *_left;      // 左孩子
-    RBTreeNode *_right;     // 右孩子
-    RBTreeNode *_parent;    // 父节点
+    Color _color;        // 颜色
+    T _key;              // 关键字
+    RBTreeNode *_left;   // 左孩子
+    RBTreeNode *_right;  // 右孩子
+    RBTreeNode *_parent; // 父节点
 };
 
-template<class T>
+template <class T>
 class RBTree
 {
-    typedef RBTreeNode<T> RBTreeNode;
+    typedef RBTreeNode<T> RBNode;
 
 private:
     /**
@@ -31,9 +32,9 @@ private:
      * @param key
      * @return Node *
      */
-    RBTreeNode *createNode(const T &key = T())
+    RBNode *createNode(const T &key = T())
     {
-        RBTreeNode *node = new RBTreeNode();
+        RBNode *node = new RBNode();
 
         node->_color = RED;
         node->_key = key;
@@ -51,7 +52,7 @@ private:
      * @param key
      * @return Node *
      */
-    RBTreeNode *find(RBTreeNode *root, const T &key) const
+    RBNode *find(RBNode *root, const T &key) const
     {
         if (root == _nil)
         {
@@ -77,13 +78,13 @@ private:
      *
      * @param node
      */
-    void insertFixup(RBTreeNode *node)
+    void insertFixup(RBNode *node)
     {
         while (node->_parent->_color == RED)
         {
             if (node->_parent == node->_parent->_parent->_left)
             {
-                RBTreeNode *rightUncle = node->_parent->_parent->_right;
+                RBNode *rightUncle = node->_parent->_parent->_right;
 
                 if (rightUncle->_color == RED)
                 {
@@ -105,7 +106,7 @@ private:
             }
             else
             {
-                RBTreeNode *leftUncle = node->_parent->_parent->_left;
+                RBNode *leftUncle = node->_parent->_parent->_left;
 
                 if (leftUncle->_color == RED)
                 {
@@ -134,10 +135,10 @@ private:
      *
      * @param node
      */
-    void erase(RBTreeNode *node)
+    void erase(RBNode *node)
     {
-        RBTreeNode *child = _nil;
-        RBTreeNode *current = node;
+        RBNode *child = _nil;
+        RBNode *current = node;
         Color curColor = current->_color;
 
         if (node->_left == _nil)
@@ -181,13 +182,13 @@ private:
      *
      * @param node
      */
-    void eraseFixup(RBTreeNode *node)
+    void eraseFixup(RBNode *node)
     {
         while (node != _root && node->_color == BLACK)
         {
             if (node == node->_parent->_left)
             {
-                RBTreeNode *rightBrother = node->_parent->_right;
+                RBNode *rightBrother = node->_parent->_right;
 
                 if (rightBrother->_color == RED)
                 {
@@ -219,7 +220,7 @@ private:
             }
             else
             {
-                RBTreeNode *leftBrother = node->_parent->_left;
+                RBNode *leftBrother = node->_parent->_left;
 
                 if (leftBrother->_color == RED)
                 {
@@ -258,9 +259,9 @@ private:
      *
      * @param node
      */
-    void leftRotate(RBTreeNode *node)
+    void leftRotate(RBNode *node)
     {
-        RBTreeNode *right = node->_right;
+        RBNode *right = node->_right;
 
         node->_right = right->_left;
         if (right->_left != _nil)
@@ -294,9 +295,9 @@ private:
      *
      * @param node
      */
-    void rightRotate(RBTreeNode *node)
+    void rightRotate(RBNode *node)
     {
-        RBTreeNode *left = node->_left;
+        RBNode *left = node->_left;
 
         node->_left = left->_right;
         if (left->_right != _nil)
@@ -331,7 +332,7 @@ private:
      * @param node
      * @param child
      */
-    void transplant(RBTreeNode *node, RBTreeNode *child)
+    void transplant(RBNode *node, RBNode *child)
     {
         if (node->_parent == _nil)
         {
@@ -354,7 +355,7 @@ private:
      * @param node
      * @return Node *
      */
-    RBTreeNode *maximum(RBTreeNode *node)
+    RBNode *maximum(RBNode *node)
     {
         if (node->_right == _nil)
         {
@@ -369,7 +370,7 @@ private:
      * @param node
      * @return Node *
      */
-    RBTreeNode *minimum(RBTreeNode *node)
+    RBNode *minimum(RBNode *node)
     {
         if (node->_left == _nil)
         {
@@ -383,7 +384,7 @@ private:
      *
      * @param node
      */
-    void destroy(RBTreeNode *node)
+    void destroy(RBNode *node)
     {
         if (node != nullptr && node != _nil)
         {
@@ -399,7 +400,7 @@ private:
      *
      * @param node
      */
-    void preOrder(RBTreeNode *node) const
+    void preOrder(RBNode *node) const
     {
         if (node != nullptr && node != _nil)
         {
@@ -414,7 +415,7 @@ private:
      *
      * @param node
      */
-    void inOrder(RBTreeNode *node) const
+    void inOrder(RBNode *node) const
     {
         if (node != nullptr && node != _nil)
         {
@@ -429,7 +430,7 @@ private:
      *
      * @param node
      */
-    void postOrder(RBTreeNode *node) const
+    void postOrder(RBNode *node) const
     {
         if (node != nullptr && node != _nil)
         {
@@ -467,8 +468,8 @@ public:
      */
     bool insert(const T &key)
     {
-        RBTreeNode *parent = _nil;
-        RBTreeNode *current = _root;
+        RBNode *parent = _nil;
+        RBNode *current = _root;
 
         // 查找到插入节点的父节点，若根节点为空，则父节点为空
         while (current != _nil)
@@ -488,7 +489,7 @@ public:
             }
         }
 
-        RBTreeNode *node = createNode(key);
+        RBNode *node = createNode(key);
 
         node->_parent = parent;
 
@@ -525,7 +526,7 @@ public:
      */
     bool erase(const T &key)
     {
-        RBTreeNode *node = find(_root, key);
+        RBNode *node = find(_root, key);
 
         if (_nil == node)
         {
@@ -543,7 +544,7 @@ public:
      * @param node
      * @return
      */
-    bool erase(const RBTreeNode *&node)
+    bool erase(const RBNode *&node)
     {
         if (nullptr == node || _nil == node)
         {
@@ -561,9 +562,9 @@ public:
      * @param key
      * @return Node *
      */
-    RBTreeNode *find(const T &key) const
+    RBNode *find(const T &key) const
     {
-        RBTreeNode *node = find(_root, key);
+        RBNode *node = find(_root, key);
 
         if (node == _nil)
         {
@@ -617,9 +618,9 @@ public:
     }
 
 private:
-    RBTreeNode *_root;  // 根节点
-    RBTreeNode *_nil;   // 外部黑节点表示空
-    size_t _size;       // 元素数量
+    RBNode *_root; // 根节点
+    RBNode *_nil;  // 外部黑节点表示空
+    size_t _size;  // 元素数量
 };
 
 #endif // RBTREE_H_
