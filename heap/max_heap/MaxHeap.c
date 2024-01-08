@@ -102,12 +102,11 @@ int Pop(Heap *pHeap)
     pHeap->size--;
 
     int cur = 0;
-    int left = 2 * cur + 1;
-    int right = 2 * cur + 2;
-
     while (cur < pHeap->size)
     {
         int largest = cur;
+        int left = 2 * cur + 1;
+        int right = 2 * cur + 2;
 
         if (left < pHeap->size && pHeap->array[left] > pHeap->array[largest])
         {
@@ -123,8 +122,6 @@ int Pop(Heap *pHeap)
         {
             Swap(pHeap->array + cur, pHeap->array + largest);
             cur = largest;
-            left = 2 * cur + 1;
-            right = 2 * cur + 2;
         }
         else
         {
