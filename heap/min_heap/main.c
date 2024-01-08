@@ -8,9 +8,9 @@ void Print(Heap *pHeap)
 {
     for (int i = 0; i < pHeap->size; i++)
     {
-        printf("%d\n", pHeap->array[i]);
+        printf("%d ", pHeap->array[i]);
     }
-    printf("\n");
+    printf("\n\n");
 }
 
 int main()
@@ -19,22 +19,13 @@ int main()
 
     if (Init(&heap, HEAP_LENGTH) == 0)
     {
-        for (int i = 0; i < HEAP_LENGTH; i++)
+        for (int i = HEAP_LENGTH - 1; i >= 0; i--)
         {
             Push(&heap, i);
         }
 
         /**
-         * => 0
-         * => 1
-         * => 2
-         * => 3
-         * => 4
-         * => 5
-         * => 6
-         * => 7
-         * => 8
-         * => 9
+         * => 0 1 4 3 2 8 5 9 6 7
          */
         Print(&heap);
 
@@ -44,11 +35,7 @@ int main()
         }
 
         /**
-         * => 5
-         * => 6
-         * => 8
-         * => 7
-         * => 9
+         * => 5 6 8 9 7
          */
         Print(&heap);
 

@@ -141,26 +141,31 @@ int Push(Heap *pHeap, int element)
         return -1;
     }
 
-    int index = pHeap->size;
+    pHeap->array[pHeap->size] = element;
+    pHeap->size++;
 
+    int cur = pHeap->size - 1;
+    int parent = (cur - 1) / 2;
     if (Heap_Max == pHeap->type)
     {
-        while (index > 0 && pHeap->array[index / 2] < element)
+        while (cur > 0 && pHeap->array[cur] > pHeap->array[parent])
         {
-            pHeap->array[index] = pHeap->array[index / 2];
-            index /= 2;
+            Swap(pHeap->array + cur, pHeap->array + parent);
+
+            cur = parent;
+            parent = (cur - 1) / 2;
         }
     }
     else
     {
-        while (index > 0 && pHeap->array[index / 2] > element)
+        while (cur > 0 && pHeap->array[cur] < pHeap->array[parent])
         {
-            pHeap->array[index] = pHeap->array[index / 2];
-            index /= 2;
+            Swap(pHeap->array + cur, pHeap->array + parent);
+
+            cur = parent;
+            parent = (cur - 1) / 2;
         }
     }
-    pHeap->array[index] = element;
-    pHeap->size++;
 
     return 0;
 }
@@ -172,56 +177,73 @@ int Pop(Heap *pHeap)
         return -1;
     }
 
-    int size = --pHeap->size;
-    int last = pHeap->array[size];
-    int index = 0;
-    int child = 0;
+    pHeap->array[0] = pHeap->array[pHeap->size - 1];
+    pHeap->size--;
+
+    int cur = 0;
+    int left = 2 * cur + 1;
+    int right = 2 * cur + 2;
 
     if (Heap_Max == pHeap->type)
     {
-        pHeap->array[size] = INT_MIN;
-        for (index = 0; index * 2 < size; index = child)
+        while (cur < pHeap->size)
         {
-            child = index * 2 + 1;
+            int largest = cur;
 
-            if (child + 1 < size && pHeap->array[child] < pHeap->array[child + 1])
+            if (left < pHeap->size && pHeap->array[left] > pHeap->array[largest])
             {
-                child++;
+                largest = left;
             }
 
-            if (last > pHeap->array[child])
+            if (right < pHeap->size && pHeap->array[right] > pHeap->array[largest])
             {
-                break;
+                largest = right;
+            }
+
+            if (largest != cur)
+            {
+                Swap(pHeap->array + cur, pHeap->array + largest);
+                cur = largest;
+                left = 2 * cur + 1;
+                right = 2 * cur + 2;
             }
             else
             {
-                pHeap->array[index] = pHeap->array[child];
+                break;
             }
         }
+        pHeap->array[pHeap->size] = INT_MIN;
     }
     else
     {
-        pHeap->array[size] = INT_MAX;
-        for (index = 0; index * 2 < size; index = child)
+        while (cur < pHeap->size)
         {
-            child = index * 2 + 1;
+            int largest = cur;
 
-            if (child + 1 < size && pHeap->array[child] > pHeap->array[child + 1])
+            if (left < pHeap->size && pHeap->array[left] < pHeap->array[largest])
             {
-                child++;
+                largest = left;
             }
 
-            if (last < pHeap->array[child])
+            if (right < pHeap->size && pHeap->array[right] < pHeap->array[largest])
             {
-                break;
+                largest = right;
+            }
+
+            if (largest != cur)
+            {
+                Swap(pHeap->array + cur, pHeap->array + largest);
+                cur = largest;
+                left = 2 * cur + 1;
+                right = 2 * cur + 2;
             }
             else
             {
-                pHeap->array[index] = pHeap->array[child];
+                break;
             }
         }
+        pHeap->array[pHeap->size] = INT_MAX;
     }
-    pHeap->array[index] = last;
 
     return 0;
 }

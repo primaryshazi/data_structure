@@ -1,5 +1,12 @@
 #include "MinHeap.h"
 
+static void Swap(int *a, int *b)
+{
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
 int Init(Heap *pHeap, int length)
 {
     assert(NULL != pHeap);
@@ -13,7 +20,7 @@ int Init(Heap *pHeap, int length)
 
     for (int i = 0; i < length; i++)
     {
-        pHeap->array[i] = INT_MAX;
+        pHeap->array[i] = INT_MIN;
     }
 
     pHeap->length = length;
@@ -68,19 +75,18 @@ int Push(Heap *pHeap, int element)
         return -1;
     }
 
-    int index = pHeap->size;
-
-    /**
-     * 子节点均小于左右节点，子节点i，左节点2 * i + 1，右节点2 * i + 2
-     * 若其父节点大于子节点，则将父节点与子节点交换
-     */
-    while (index > 0 && pHeap->array[index / 2] > element)
-    {
-        pHeap->array[index] = pHeap->array[index / 2];
-        index /= 2;
-    }
-    pHeap->array[index] = element;
+    pHeap->array[pHeap->size] = element;
     pHeap->size++;
+
+    int cur = pHeap->size - 1;
+    int parent = (cur - 1) / 2;
+    while (cur > 0 && pHeap->array[cur] < pHeap->array[parent])
+    {
+        Swap(pHeap->array + cur, pHeap->array + parent);
+
+        cur = parent;
+        parent = (cur - 1) / 2;
+    }
 
     return 0;
 }
@@ -92,40 +98,41 @@ int Pop(Heap *pHeap)
         return -1;
     }
 
-    int size = --pHeap->size;
-    int last = pHeap->array[size];
-    int index = 0;
-    int child = 0;
+    pHeap->array[0] = pHeap->array[pHeap->size - 1];
+    pHeap->size--;
 
-    pHeap->array[size] = INT_MAX;
+    int cur = 0;
+    int left = 2 * cur + 1;
+    int right = 2 * cur + 2;
 
-    for (index = 0; index * 2 < size; index = child)
+    while (cur < pHeap->size)
     {
-        child = index * 2 + 1;
+        int largest = cur;
 
-        /**
-         * 获取最小子节点的索引
-         * 若存在右节点且左节点大于右节点则定位至右索引
-         */
-        if (child + 1 < size && pHeap->array[child] > pHeap->array[child + 1])
+        if (left < pHeap->size && pHeap->array[left] < pHeap->array[largest])
         {
-            child++;
+            largest = left;
         }
 
-        /**
-         * 当最后一个元素小于其子节点时则退出
-         * 当最后一个元素不小于其子节点时，与其最小子节点互换
-         */
-        if (last < pHeap->array[child])
+        if (right < pHeap->size && pHeap->array[right] < pHeap->array[largest])
         {
-            break;
+            largest = right;
+        }
+
+        if (largest != cur)
+        {
+            Swap(pHeap->array + cur, pHeap->array + largest);
+            cur = largest;
+            left = 2 * cur + 1;
+            right = 2 * cur + 2;
         }
         else
         {
-            pHeap->array[index] = pHeap->array[child];
+            break;
         }
     }
-    pHeap->array[index] = last;
+
+    pHeap->array[pHeap->size] = INT_MAX;
 
     return 0;
 }
